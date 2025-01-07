@@ -29,6 +29,10 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
+	if input.Role == "" {
+		input.Role = "helper"
+	}
+
 	newUser, err := h.service.RegisterUser(input)
 	if err != nil {
 		response := helper.ResponseMessage("Register Failed", "bad request", http.StatusBadRequest, err.Error())

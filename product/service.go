@@ -3,7 +3,7 @@ package product
 type Service interface {
 	GetAllProducts() ([]Product, error)
 	FindProducts(keyword string) ([]Product, error)
-	FindProductsById(id int) ([]Product, error)
+	FindProductsById(id int) (Product, error)
 }
 
 type service struct {
@@ -30,7 +30,7 @@ func (s *service) FindProducts(keyword string) ([]Product, error) {
 	return product, nil
 }
 
-func (s *service) FindProductsById(id int) ([]Product, error) {
+func (s *service) FindProductsById(id int) (Product, error) {
 	product, err := s.repository.FindProductsById(id)
 	if err != nil {
 		return product, err

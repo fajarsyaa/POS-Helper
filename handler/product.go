@@ -26,7 +26,7 @@ func (h *productHandler) GetAllProduct(ctx *gin.Context) {
 		}
 	}
 
-	formatResponse := product.FormatterProductResponse(products)
+	formatResponse := product.FormatterProductResponses(products)
 	response := helper.ResponseMessage("Success", "success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
@@ -52,7 +52,7 @@ func (h *productHandler) FindProductByName(ctx *gin.Context) {
 		}
 	}
 
-	formatResponse := product.FormatterProductResponse(products)
+	formatResponse := product.FormatterProductResponses(products)
 	response := helper.ResponseMessage("Success", "success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }

@@ -1,11 +1,16 @@
 package product
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	GetAllProducts() ([]Product, error)
 	FindProducts(keyword string) ([]Product, error)
-	FindProductsById(id int) ([]Product, error)
+	FindProductsById(id int) (Product, error)
+	UpdateDecrementStockProductById(id, stock int) (bool, error)
 }
 
 type repository struct {
@@ -34,11 +39,33 @@ func (r *repository) FindProducts(keyword string) ([]Product, error) {
 	return products, nil
 }
 
-func (r *repository) FindProductsById(id int) ([]Product, error) {
-	var products []Product
+func (r *repository) FindProductsById(id int) (Product, error) {
+	var products Product
 	err := r.db.Where("id = ?", id).Find(&products).Error
 	if err != nil {
-		return nil, err
+		return Product{}, err
 	}
 	return products, nil
+}
+
+func (r *repository) UpdateDecrementStockProductById(id, stock int) (bool, error) {
+	var product Product
+
+	err := r.db.First(&product, id).Error
+	if err != nil {
+		return false, err
+	}
+
+	if product.Stock < stock {
+		return false, fmt.Errorf("Not enough stock")
+	}
+
+	product.Stock -= stock
+
+	err = r.db.Save(&product).Error
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

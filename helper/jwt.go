@@ -78,6 +78,17 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if ok && token.Valid {
+			ctx.Set("userID", claims["UserID"])
+		} else {
+			err := gin.H{"error": "Invalid or expired token"}
+			response := ResponseMessage("Failed", "Unauthorized", http.StatusUnauthorized, err)
+			ctx.JSON(http.StatusUnauthorized, response)
+			ctx.Abort()
+			return
+		}
+
 		ctx.Next()
 	}
 }

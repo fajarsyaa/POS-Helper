@@ -21,12 +21,12 @@ CREATE TABLE products (
 
 
 CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(100) PRIMARY KEY,
     user_id INT NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
     customer_name VARCHAR(100) NOT NULL,
     customer_phone VARCHAR(15),
-    customer_address TEXT,
+    customer_address VARCHAR(15), 
     status ENUM('pending', 'done') DEFAULT 'pending',
     expired_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -34,12 +34,12 @@ CREATE TABLE orders (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
 CREATE TABLE order_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
+    id VARCHAR(100) PRIMARY KEY,
+    order_id VARCHAR(100) NOT NULL,
     product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    subtotal DECIMAL(10, 2) NOT NULL,
+    quantity INT NOT NULL,    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
@@ -127,3 +127,5 @@ INSERT INTO products (name, description, price, stock) VALUES
 ('Women\'s Tote Bag', 'Spacious tote bag for everyday use.', 599850, 60),
 ('Men\'s Casual Belt', 'Stylish casual belt for everyday wear.', 374850, 80),
 ('Women\'s Clutch Bag', 'Elegant clutch bag for formal occasions.', 749850, 30);
+
+

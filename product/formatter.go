@@ -15,7 +15,7 @@ type ProductFormatter struct {
 	CreatedAt   string `json:"created_at"`
 }
 
-func FormatterProductResponse(products []Product) []ProductFormatter {
+func FormatterProductResponses(products []Product) []ProductFormatter {
 	var formattedProducts []ProductFormatter
 
 	for _, product := range products {
@@ -31,6 +31,18 @@ func FormatterProductResponse(products []Product) []ProductFormatter {
 	}
 
 	return formattedProducts
+}
+
+func FormatterProductResponse(product Product) ProductFormatter {
+	formatter := ProductFormatter{
+		Id:          product.Id,
+		Name:        product.Name,
+		Description: product.Description,
+		Stock:       product.Stock,
+		Price:       formatPrice(product.Price),
+		CreatedAt:   formatDate(product.CreatedAt),
+	}
+	return formatter
 }
 
 func formatPrice(price float64) string {
