@@ -42,9 +42,8 @@ func GenerateJWT(userID int, email, role string) (string, error) {
 	return signedToken, nil
 }
 
-func TokenAuthMiddleware() gin.HandlerFunc {
+func TokenAuthMiddleware(requiredRoles []string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
 			err := gin.H{"error": "Authorization Required"}
@@ -81,6 +80,31 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if ok && token.Valid {
 			ctx.Set("userID", claims["UserID"])
+
+			userRole, ok := claims["Role"].(string)
+			if !ok {
+				err := gin.H{"error": "Role not found in token"}
+				response := ResponseMessage("Failed", "Unauthorized", http.StatusUnauthorized, err)
+				ctx.JSON(http.StatusUnauthorized, response)
+				ctx.Abort()
+				return
+			}
+
+			roleAllowed := false
+			for _, role := range requiredRoles {
+				if userRole == role {
+					roleAllowed = true
+					break
+				}
+			}
+
+			if !roleAllowed {
+				err := gin.H{"error": "Insufficient permissions"}
+				response := ResponseMessage("Failed", "Forbidden", http.StatusForbidden, err)
+				ctx.JSON(http.StatusForbidden, response)
+				ctx.Abort()
+				return
+			}
 		} else {
 			err := gin.H{"error": "Invalid or expired token"}
 			response := ResponseMessage("Failed", "Unauthorized", http.StatusUnauthorized, err)

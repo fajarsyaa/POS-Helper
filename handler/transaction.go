@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"slash/helper"
 	"slash/transaction"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,15 +23,15 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Created Order Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Created Order Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID not found in context"}
-		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -55,23 +54,18 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	var expiredAt time.Time
-	if order.ExpiredAt != nil {
-		expiredAt = *order.ExpiredAt
-	} else {
-		expiredAt = time.Time{}
-	}
+	expiredAt := order.ExpiredAt
 
 	formatResponse := transaction.FormatterTRXResponse(order.Id, expiredAt)
-	response := helper.ResponseMessage("Order Created", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Order Created", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
 func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID not found in context"}
-		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		listErr := gin.H{"errors": "User ID Not Found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -92,8 +86,8 @@ func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
 		return
 	}
 
-	formatResponse := transaction.FormatterOrderResponses(orders)
-	response := helper.ResponseMessage("Order Created", "success", http.StatusOK, formatResponse)
+	formatResponse := transaction.FormatterAllOrderResponses(orders)
+	response := helper.ResponseMessage("Get Data Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -104,15 +98,15 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Get Data Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Get Data Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID not found in context"}
-		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -135,8 +129,15 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 		return
 	}
 
+	if order.Id == "" {
+		listErr := gin.H{"errors": "Data Not Found"}
+		response := helper.ResponseMessage("Get Data Failed", "Success", http.StatusOK, listErr)
+		ctx.JSON(http.StatusOK, response)
+		return
+	}
+
 	formatResponse := transaction.FormatterOrderResponse(order)
-	response := helper.ResponseMessage("Get Data Failed", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Get Data Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -147,15 +148,15 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Payment Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Payment Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID not found in context"}
-		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -179,7 +180,7 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 	}
 
 	formatResponse := transaction.FormatterPaymentResponse(order)
-	response := helper.ResponseMessage("Payment Success", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Payment Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -190,7 +191,7 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Update Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Update Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -204,6 +205,37 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 	}
 
 	formatResponse := transaction.FormatterUpdateOrderResponse(order)
-	response := helper.ResponseMessage("Update Success", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Update Success", "Success", http.StatusOK, formatResponse)
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (h *trxHandler) DeleteOrderById(ctx *gin.Context) {
+	var input transaction.OrderDeleteInput
+	err := ctx.ShouldBind(&input)
+	if err != nil {
+		errors := helper.ResponseMessageValidationError(err)
+		listErr := gin.H{"errors": errors}
+
+		response := helper.ResponseMessage("Delete Failed", "Bad Request", http.StatusBadRequest, listErr)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if input.Id == "" {
+		listErr := gin.H{"errors": "Order ID cannot NULL"}
+		response := helper.ResponseMessage("Delete Failed", "Bad Request", http.StatusBadRequest, listErr)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	err = h.service.DeleteOrderById(input.Id)
+	if err != nil {
+		listErr := gin.H{"errors": err.Error()}
+		response := helper.ResponseMessage("Delete Failed", "Failed", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := helper.ResponseMessage("Delete Success", "Success", http.StatusOK, gin.H{"message": "Delete Successfully"})
 	ctx.JSON(http.StatusOK, response)
 }

@@ -29,3 +29,7 @@ type UpdateOrderInput struct {
 	Quantity  int    `json:"quantity"`
 	OrderID   string `json:"order_id"`
 }
+
+type OrderDeleteInput struct {
+	Id string `json:"order_id"`
+}

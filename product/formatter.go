@@ -7,12 +7,15 @@ import (
 )
 
 type ProductFormatter struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Stock       int    `json:"stock"`
-	Price       string `json:"price"`
-	CreatedAt   string `json:"created_at"`
+	Id        int    `json:"id"`
+	SKU       string `json:"sku"`
+	Name      string `json:"name"`
+	Stock     int    `json:"stock"`
+	Price     string `json:"price"`
+	CreatedAt string `json:"created_at"`
+	Size      string `json:"size"`
+	Color     string `json:"color"`
+	Image     string `json:"image"`
 }
 
 func FormatterProductResponses(products []Product) []ProductFormatter {
@@ -20,12 +23,15 @@ func FormatterProductResponses(products []Product) []ProductFormatter {
 
 	for _, product := range products {
 		formatter := ProductFormatter{
-			Id:          product.Id,
-			Name:        product.Name,
-			Description: product.Description,
-			Stock:       product.Stock,
-			Price:       formatPrice(product.Price),
-			CreatedAt:   formatDate(product.CreatedAt),
+			Id:        product.Id,
+			SKU:       product.SKU,
+			Name:      product.Name,
+			Size:      product.Size,
+			Color:     product.Color,
+			Image:     product.Image,
+			Stock:     product.Stock,
+			Price:     formatPrice(product.Price),
+			CreatedAt: formatDate(product.CreatedAt),
 		}
 		formattedProducts = append(formattedProducts, formatter)
 	}
@@ -35,12 +41,15 @@ func FormatterProductResponses(products []Product) []ProductFormatter {
 
 func FormatterProductResponse(product Product) ProductFormatter {
 	formatter := ProductFormatter{
-		Id:          product.Id,
-		Name:        product.Name,
-		Description: product.Description,
-		Stock:       product.Stock,
-		Price:       formatPrice(product.Price),
-		CreatedAt:   formatDate(product.CreatedAt),
+		Id:        product.Id,
+		SKU:       product.SKU,
+		Name:      product.Name,
+		Size:      product.Size,
+		Color:     product.Color,
+		Image:     product.Image,
+		Stock:     product.Stock,
+		Price:     formatPrice(product.Price),
+		CreatedAt: formatDate(product.CreatedAt),
 	}
 	return formatter
 }

@@ -24,7 +24,7 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Register Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Register Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -35,7 +35,7 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 
 	newUser, err := h.service.RegisterUser(input)
 	if err != nil {
-		response := helper.ResponseMessage("Register Failed", "bad request", http.StatusBadRequest, err.Error())
+		response := helper.ResponseMessage("Register Failed", "Bad Request", http.StatusBadRequest, err.Error())
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -48,7 +48,7 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 	}
 
 	formatResponse := user.FormatterUserResponse(newUser, token)
-	response := helper.ResponseMessage("User Created", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("User Created", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -59,14 +59,14 @@ func (h *userHandler) Login(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Login Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Login Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	userExist, err := h.service.Login(request)
 	if err != nil {
-		response := helper.ResponseMessage("Login Failed", "bad request", http.StatusBadRequest, err.Error())
+		response := helper.ResponseMessage("Login Failed", "Bad Request", http.StatusBadRequest, err.Error())
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -79,7 +79,7 @@ func (h *userHandler) Login(ctx *gin.Context) {
 	}
 
 	formatResponse := user.FormatterUserResponse(userExist, token)
-	response := helper.ResponseMessage("Login Succes", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Login Succes", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 
 }
@@ -94,7 +94,7 @@ func (h *userHandler) CheckEmailAvailable(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Check User Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Check User Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -112,6 +112,6 @@ func (h *userHandler) CheckEmailAvailable(ctx *gin.Context) {
 	if IsEmailAvailable {
 		metaMessage = "Email Available"
 	}
-	response := helper.ResponseMessage(metaMessage, "success", http.StatusOK, data)
+	response := helper.ResponseMessage(metaMessage, "Success", http.StatusOK, data)
 	ctx.JSON(http.StatusOK, response)
 }

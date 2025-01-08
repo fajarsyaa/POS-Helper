@@ -27,7 +27,7 @@ func (h *productHandler) GetAllProduct(ctx *gin.Context) {
 	}
 
 	formatResponse := product.FormatterProductResponses(products)
-	response := helper.ResponseMessage("Success", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -38,22 +38,26 @@ func (h *productHandler) FindProductByName(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	products, err := h.service.FindProducts(input.Keyword)
 	if err != nil {
-		if err != nil {
-			response := helper.ResponseMessage("Failed", "Product Not Found", http.StatusNotFound, err.Error())
-			ctx.JSON(http.StatusNotFound, response)
-			return
-		}
+		response := helper.ResponseMessage("Failed", "Product Not Found", http.StatusNotFound, err.Error())
+		ctx.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	if len(products) == 0 {
+		response := helper.ResponseMessage("Success", "Product Not Found", http.StatusOK, "Product Not Found")
+		ctx.JSON(http.StatusOK, response)
+		return
 	}
 
 	formatResponse := product.FormatterProductResponses(products)
-	response := helper.ResponseMessage("Success", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -64,7 +68,7 @@ func (h *productHandler) FindProductById(ctx *gin.Context) {
 		errors := helper.ResponseMessageValidationError(err)
 		listErr := gin.H{"errors": errors}
 
-		response := helper.ResponseMessage("Failed", "bad request", http.StatusBadRequest, listErr)
+		response := helper.ResponseMessage("Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -79,6 +83,6 @@ func (h *productHandler) FindProductById(ctx *gin.Context) {
 	}
 
 	formatResponse := product.FormatterProductResponse(products)
-	response := helper.ResponseMessage("Success", "success", http.StatusOK, formatResponse)
+	response := helper.ResponseMessage("Success", "Success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }

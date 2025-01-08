@@ -13,6 +13,13 @@ type OrderFormatter struct {
 	Order
 }
 
+type GetAllOrder struct {
+	OrderID     string
+	Name        string
+	ExpiredTime time.Time
+	Status      string
+}
+
 type PaymentFormatter struct {
 	OrderId string  `json:"order_id"`
 	Status  string  `json:"status"`
@@ -34,6 +41,22 @@ func FormatterOrderResponses(orders []Order) []OrderFormatter {
 	for _, order := range orders {
 		formattedOrder := OrderFormatter{
 			Order: order,
+		}
+		formattedOrders = append(formattedOrders, formattedOrder)
+	}
+
+	return formattedOrders
+}
+
+func FormatterAllOrderResponses(orders []Order) []GetAllOrder {
+	var formattedOrders []GetAllOrder
+
+	for _, order := range orders {
+		formattedOrder := GetAllOrder{
+			OrderID:     order.Id,
+			Name:        order.CustomerName,
+			ExpiredTime: order.ExpiredAt,
+			Status:      order.Status,
 		}
 		formattedOrders = append(formattedOrders, formattedOrder)
 	}

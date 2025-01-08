@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"errors"
 	"fmt"
 	"slash/helper"
 	"slash/product"
@@ -15,6 +16,7 @@ type Repository interface {
 	GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error)
 	PaymentNow(OrderId string) (Order, error)
 	UpdateOrderByID(OrderId string, updatedItems OrderItem) (Order, error)
+	DeleteOrderById(OrderId string) error
 }
 
 type repository struct {
@@ -87,7 +89,7 @@ func (r *repository) CreateOrder(order Order) (Order, error) {
 
 func (r *repository) GetOrdersByUserId(UserId int) ([]Order, error) {
 	var orders []Order
-	err := r.db.Preload("OrderItems", "id != ''").Where("user_id = ?", UserId).Find(&orders).Error
+	err := r.db.Where("user_id = ?", UserId).Find(&orders).Error
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +98,7 @@ func (r *repository) GetOrdersByUserId(UserId int) ([]Order, error) {
 
 func (r *repository) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error) {
 	var orders Order
-	err := r.db.Preload("OrderItems", "id != ''").Where("user_id = ? && id = ?", UserId, OrderId).Find(&orders).Error
+	err := r.db.Preload("OrderItems", "id != ''").Preload("OrderItems.ItemDetail").Where("user_id = ? && id = ?", UserId, OrderId).Find(&orders).Error
 	if err != nil {
 		return Order{}, err
 	}
@@ -146,9 +148,6 @@ func (r *repository) PaymentNow(OrderId string) (Order, error) {
 		}
 		fmt.Printf("%d - 3 %s", i, product)
 	}
-
-	expiredAt := time.Now().Add(1 * time.Hour)
-	order.ExpiredAt = &expiredAt
 	order.Status = "done"
 	err = trx.Save(&order).Error
 	if err != nil {
@@ -190,7 +189,11 @@ func (r *repository) UpdateOrderByID(OrderId string, updatedItems OrderItem) (Or
 		trx.Rollback()
 		return Order{}, fmt.Errorf("Order Not Found")
 	}
-	fmt.Printf("1 - %s\n\n\n", order.OrderItems)
+
+	if order.Status == "done" {
+		trx.Rollback()
+		return Order{}, fmt.Errorf("Can't Update This Data. Because Already Paid")
+	}
 
 	if order.OrderItems == nil {
 		trx.Rollback()
@@ -203,17 +206,14 @@ func (r *repository) UpdateOrderByID(OrderId string, updatedItems OrderItem) (Or
 			break
 		}
 	}
-	fmt.Printf("2 - %s\n\n\n", order.OrderItems)
 
 	order.UpdatedAt = time.Now()
-
 	err = trx.Save(&order.OrderItems).Error
 	if err != nil {
 		trx.Rollback()
 		return Order{}, fmt.Errorf("Failed to update order")
 	}
 
-	fmt.Printf("3 - %s\n\n\n", order.OrderItems)
 	err = trx.Save(&order).Error
 	if err != nil {
 		trx.Rollback()
@@ -224,6 +224,24 @@ func (r *repository) UpdateOrderByID(OrderId string, updatedItems OrderItem) (Or
 	if err != nil {
 		return Order{}, err
 	}
-	fmt.Printf("4 - %s\n\n\n", order.OrderItems)
+
 	return order, nil
+}
+
+func (r *repository) DeleteOrderById(OrderId string) error {
+	var order Order
+	err := r.db.Preload("OrderItems", "id != ''").Where("id = ?", OrderId).First(&order).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("Order With ID %s Not Found", OrderId)
+		}
+		return fmt.Errorf("Order Not Found : %v", err)
+	}
+
+	err = r.db.Delete(&order).Error
+	if err != nil {
+		return fmt.Errorf("Failed Delete Order : %v", err)
+	}
+
+	return nil
 }

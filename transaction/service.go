@@ -12,6 +12,7 @@ type Service interface {
 	GetOrdersByUserIdAndOrderId(UserIdintint int, OrderId string) (Order, error)
 	PaymentNow(UserId int, OrderId string) (Order, error)
 	UpdateOrderByID(Input UpdateOrderInput) (Order, error)
+	DeleteOrderById(OrderId string) error
 }
 
 type service struct {
@@ -30,7 +31,7 @@ func (s *service) CreateOrder(orderInput OrderInput) (Order, error) {
 		CustomerName:    orderInput.CustomerName,
 		CustomerPhone:   orderInput.CustomerPhone,
 		CustomerAddress: orderInput.CustomerAddress,
-		ExpiredAt:       nil,
+		ExpiredAt:       time.Now().Add(1 * time.Hour),
 		Status:          "pending",
 		CreatedAt:       time.Now(),
 	}
@@ -68,8 +69,9 @@ func (s *service) GetOrdersByUserId(UserId int) ([]Order, error) {
 func (s *service) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error) {
 	order, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
 	if err != nil {
-		return Order{}, err
+		return Order{}, fmt.Errorf("Data Not Found")
 	}
+
 	return order, nil
 }
 
@@ -80,7 +82,11 @@ func (s *service) PaymentNow(UserId int, OrderId string) (Order, error) {
 	}
 
 	if exist.Status == "done" {
-		return Order{}, fmt.Errorf("Payment Already Paid")
+		return Order{}, fmt.Errorf("Bill Already Paid")
+	}
+
+	if exist.ExpiredAt.Before(time.Now()) {
+		return Order{}, fmt.Errorf("Expired Billing Payment")
 	}
 
 	order, err := s.repository.PaymentNow(OrderId)
@@ -106,4 +112,13 @@ func (s *service) UpdateOrderByID(Input UpdateOrderInput) (Order, error) {
 	}
 
 	return order, nil
+}
+
+func (s *service) DeleteOrderById(OrderId string) error {
+	err := s.repository.DeleteOrderById(OrderId)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
