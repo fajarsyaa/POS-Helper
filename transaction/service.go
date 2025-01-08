@@ -8,6 +8,7 @@ import (
 type Service interface {
 	CreateOrder(orderInput OrderInput) (Order, error)
 	GetOrdersByUserId(UserId int) ([]Order, error)
+	GetOrdersByUserIdAndOrderId(UserIdintint int, OrderId string) (Order, error)
 }
 
 type service struct {
@@ -58,6 +59,14 @@ func (s *service) GetOrdersByUserId(UserId int) ([]Order, error) {
 	orders, err := s.repository.GetOrdersByUserId(UserId)
 	if err != nil {
 		return nil, err
+	}
+	return orders, nil
+}
+
+func (s *service) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error) {
+	orders, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
+	if err != nil {
+		return Order{}, err
 	}
 	return orders, nil
 }

@@ -58,3 +58,76 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 	response := helper.ResponseMessage("Order Created", "success", http.StatusOK, formatResponse)
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
+	userID, ok := ctx.Get("userID")
+	if !ok {
+		listErr := gin.H{"errors": "User  ID not found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	userId, ok := userID.(float64)
+	if !ok {
+		listErr := gin.H{"errors": "Internal Server Error"}
+		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	orders, err := h.service.GetOrdersByUserId(int(userId))
+	if err != nil {
+		listErr := gin.H{"errors": err.Error()}
+		response := helper.ResponseMessage("Create Failed", "Failed", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	formatResponse := transaction.FormatterOrderResponses(orders)
+	response := helper.ResponseMessage("Order Created", "success", http.StatusOK, formatResponse)
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
+	var input transaction.OrderDetailInput
+	err := ctx.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.ResponseMessageValidationError(err)
+		listErr := gin.H{"errors": errors}
+
+		response := helper.ResponseMessage("Created Order Failed", "bad request", http.StatusBadRequest, listErr)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	userID, ok := ctx.Get("userID")
+	if !ok {
+		listErr := gin.H{"errors": "User  ID not found in context"}
+		response := helper.ResponseMessage("System Error", "User  ID not found", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	userId, ok := userID.(float64)
+	if !ok {
+		listErr := gin.H{"errors": "Internal Server Error"}
+		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	} else {
+		input.UserId = int(userId)
+	}
+
+	order, err := h.service.GetOrdersByUserIdAndOrderId(input.UserId, input.Id)
+	if err != nil {
+		listErr := gin.H{"errors": err.Error()}
+		response := helper.ResponseMessage("Create Failed", "Failed", http.StatusInternalServerError, listErr)
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	formatResponse := transaction.FormatterOrderResponse(order)
+	response := helper.ResponseMessage("Order Created", "success", http.StatusOK, formatResponse)
+	ctx.JSON(http.StatusOK, response)
+}

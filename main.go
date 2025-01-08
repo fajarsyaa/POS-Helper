@@ -36,7 +36,7 @@ func main() {
 	prdService := product.NewService(prdRepo)
 	prdHandler := handler.NewProductHandler(prdService)
 
-	trxRepo := transaction.NewRepository(db, prdRepo)
+	trxRepo := transaction.NewRepository(db)
 	trxService := transaction.NewService(trxRepo)
 	trxHandler := handler.NewTransactionHandler(trxService)
 
@@ -49,6 +49,8 @@ func main() {
 	api.POST("/products/name", helper.TokenAuthMiddleware(), prdHandler.FindProductByName)
 	api.POST("/products/id", helper.TokenAuthMiddleware(), prdHandler.FindProductById)
 	api.POST("/order", helper.TokenAuthMiddleware(), trxHandler.CreateOrder)
+	api.GET("/orders", helper.TokenAuthMiddleware(), trxHandler.GetOrdersByUserId)
+	api.POST("/order/detail", helper.TokenAuthMiddleware(), trxHandler.GetOrdersByUserIdAndOrderId)
 
 	router.Run()
 }

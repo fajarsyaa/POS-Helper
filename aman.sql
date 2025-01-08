@@ -26,7 +26,7 @@ CREATE TABLE orders (
     total DECIMAL(10, 2) NOT NULL,
     customer_name VARCHAR(100) NOT NULL,
     customer_phone VARCHAR(15),
-    customer_address VARCHAR(15), 
+    customer_address TEXT, 
     status ENUM('pending', 'done') DEFAULT 'pending',
     expired_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,7 +36,7 @@ CREATE TABLE orders (
 
 
 CREATE TABLE order_items (
-    id VARCHAR(100) PRIMARY KEY,
+    id VARCHAR(100) PRIMARY KEY NOT NULL,
     order_id VARCHAR(100) NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,    
