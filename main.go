@@ -51,6 +51,8 @@ func main() {
 	api.POST("/order", helper.TokenAuthMiddleware(), trxHandler.CreateOrder)
 	api.GET("/orders", helper.TokenAuthMiddleware(), trxHandler.GetOrdersByUserId)
 	api.POST("/order/detail", helper.TokenAuthMiddleware(), trxHandler.GetOrdersByUserIdAndOrderId)
+	api.PUT("/order/edit", helper.TokenAuthMiddleware(), trxHandler.UpdateOrderById)
+	api.POST("/payment", helper.TokenAuthMiddleware(), trxHandler.PaymentNow)
 
 	router.Run()
 }

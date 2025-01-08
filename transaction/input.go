@@ -18,3 +18,14 @@ type OrderDetailInput struct {
 	Id     string `json:"order_id"`
 	UserId int
 }
+
+type PaymentInput struct {
+	Id     string `json:"order_id"`
+	UserId int
+}
+
+type UpdateOrderInput struct {
+	ProductID int    `json:"product_id"`
+	Quantity  int    `json:"quantity"`
+	OrderID   string `json:"order_id"`
+}

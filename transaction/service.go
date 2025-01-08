@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"fmt"
 	"slash/helper"
 	"time"
 )
@@ -9,6 +10,8 @@ type Service interface {
 	CreateOrder(orderInput OrderInput) (Order, error)
 	GetOrdersByUserId(UserId int) ([]Order, error)
 	GetOrdersByUserIdAndOrderId(UserIdintint int, OrderId string) (Order, error)
+	PaymentNow(UserId int, OrderId string) (Order, error)
+	UpdateOrderByID(Input UpdateOrderInput) (Order, error)
 }
 
 type service struct {
@@ -20,7 +23,6 @@ func NewService(repository Repository) *service {
 }
 
 func (s *service) CreateOrder(orderInput OrderInput) (Order, error) {
-
 	order := Order{
 		Id:              helper.GenerateRandomUUID(),
 		UserId:          orderInput.UserID,
@@ -28,8 +30,8 @@ func (s *service) CreateOrder(orderInput OrderInput) (Order, error) {
 		CustomerName:    orderInput.CustomerName,
 		CustomerPhone:   orderInput.CustomerPhone,
 		CustomerAddress: orderInput.CustomerAddress,
+		ExpiredAt:       nil,
 		Status:          "pending",
-		ExpiredAt:       time.Now().Add(1 * time.Hour),
 		CreatedAt:       time.Now(),
 	}
 
@@ -64,9 +66,44 @@ func (s *service) GetOrdersByUserId(UserId int) ([]Order, error) {
 }
 
 func (s *service) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error) {
-	orders, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
+	order, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
 	if err != nil {
 		return Order{}, err
 	}
-	return orders, nil
+	return order, nil
+}
+
+func (s *service) PaymentNow(UserId int, OrderId string) (Order, error) {
+	exist, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
+	if err != nil {
+		return Order{}, err
+	}
+
+	if exist.Status == "done" {
+		return Order{}, fmt.Errorf("Payment Already Paid")
+	}
+
+	order, err := s.repository.PaymentNow(OrderId)
+	if err != nil {
+		return Order{}, err
+	}
+	return order, nil
+}
+
+func (s *service) UpdateOrderByID(Input UpdateOrderInput) (Order, error) {
+	if Input.OrderID == "" {
+		return Order{}, fmt.Errorf("Orders Not Found")
+	}
+
+	orderItems := OrderItem{
+		Quantity:  Input.Quantity,
+		ProductId: Input.ProductID,
+	}
+
+	order, err := s.repository.UpdateOrderByID(Input.OrderID, orderItems)
+	if err != nil {
+		return Order{}, err
+	}
+
+	return order, nil
 }

@@ -1,6 +1,8 @@
 package transaction
 
-import "time"
+import (
+	"time"
+)
 
 type TransactionFormatter struct {
 	OrderID     string    `json:"order_id"`
@@ -9,6 +11,17 @@ type TransactionFormatter struct {
 
 type OrderFormatter struct {
 	Order
+}
+
+type PaymentFormatter struct {
+	OrderId string  `json:"order_id"`
+	Status  string  `json:"status"`
+	Total   float64 `json:"total"`
+}
+
+type UpdateOrderFormatter struct {
+	OrderId string `json:"order_id"`
+	Status  string `json:"status_order"`
 }
 
 func FormatterTRXResponse(id string, exp time.Time) TransactionFormatter {
@@ -33,4 +46,19 @@ func FormatterOrderResponse(order Order) OrderFormatter {
 		Order: order,
 	}
 	return formattedOrder
+}
+
+func FormatterPaymentResponse(order Order) PaymentFormatter {
+	return PaymentFormatter{
+		Status:  order.Status,
+		Total:   order.Total,
+		OrderId: order.Id,
+	}
+}
+
+func FormatterUpdateOrderResponse(order Order) UpdateOrderFormatter {
+	return UpdateOrderFormatter{
+		Status:  order.Status,
+		OrderId: order.Id,
+	}
 }
