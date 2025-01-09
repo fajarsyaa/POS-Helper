@@ -60,3 +60,125 @@ Untuk menjalankan proyek ini, pastikan bahwa syarat-syarat berikut telah terpenu
 
 ## Catatan Tambahan
 Gunakan POSTMAN atau tools serupa untuk memcoba
+
+
+## API Endpoint
+
+Berikut adalah daftar endpoint yang tersedia dalam aplikasi ini:
+
+### User Management
+- **REGISTER USER**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/registration`
+  - Request Body:
+    ```json
+    {
+      "name": "MrCrab",
+      "email": "MrCrab@fjr.fjr",
+      "Role": "pengguna",
+      "password": "password"
+    }
+    ```
+
+- **LOGIN**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/login`
+  - Request Body:
+    ```json
+    {
+      "email": "patrick@fjr.fjr",
+      "password": "password"
+    }
+    ```
+
+### Product Management
+- **GET ALL PRODUCTS**
+  - Method: GET
+  - URL: `localhost:8080/api/slash/products`
+
+- **FIND PRODUCT BY NAME**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/products/name`
+  - Request Body:
+    ```json
+    {
+      "keyword": "formal"
+    }
+    ```
+
+- **FIND PRODUCT BY ID**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/products/id`
+  - Request Body:
+    ```json
+    {
+      "id": 1
+    }
+    ```
+
+### Order Management
+- **CREATE ORDER**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/order`
+  - Request Body:
+    ```json
+    {
+      "products": [
+        { "products_id": 1, "quantity": 1 },
+        { "products_id": 2, "quantity": 3 }
+      ],
+      "orders_total": 448000,
+      "customer_name": "John DC",
+      "customer_phone": "1234567890",
+      "customer_address": "123 Main St, Anytown, USA"
+    }
+    ```
+
+- **GET ALL ORDERS**
+  - Method: GET
+  - URL: `localhost:8080/api/slash/orders`
+
+- **GET ORDER DETAIL BY ID**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/order/detail`
+  - Request Body:
+    ```json
+    {
+      "order_id": "ORD-8578316670019669-PWV"
+    }
+    ```
+
+- **PAYMENT**
+  - Method: POST
+  - URL: `localhost:8080/api/slash/order/payment`
+  - Request Body:
+    ```json
+    {
+      "order_id": "ORD-061ad95f31374be5-CRW"
+    }
+    ```
+
+- **UPDATE ORDER**
+  - Method: PUT
+  - URL: `localhost:8080/api/slash/order/edit`
+  - Request Body:
+    ```json
+    {
+      "order_id": "ORD-061ad95f31374be5-CRW",
+      "product_id": 1,
+      "quantity": 1
+    }
+    ```
+
+- **DELETE ORDER BY ID**
+  - Method: DELETE
+  - URL: `localhost:8080/api/slash/order/delete`
+  - Request Body:
+    ```json
+    {
+      "order_id": "ORD-2071880178101609-YBA"
+    }
+    ```
+
+---
+
