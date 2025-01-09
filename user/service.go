@@ -28,7 +28,7 @@ func (s *service) RegisterUser(request RegisterUserInput) (User, error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
 	if err != nil {
 		fmt.Println(err.Error())
-		return user, err
+		return user, errors.New("Failed create email!")
 	}
 	user.PasswordHash = string(passwordHash)
 	user.Role = request.Role
@@ -36,7 +36,7 @@ func (s *service) RegisterUser(request RegisterUserInput) (User, error) {
 	newUser, err := s.repository.Save(user)
 	if err != nil {
 		fmt.Println(err.Error())
-		return user, err
+		return user, errors.New("Failed create email!")
 	}
 
 	return newUser, nil
@@ -49,7 +49,7 @@ func (s *service) Login(request LoginInput) (User, error) {
 	user, err := s.repository.FindByEmail(email)
 	if err != nil {
 		fmt.Println(err.Error())
-		return user, errors.New("Faile found email!")
+		return user, errors.New("Failed found email!")
 	}
 	if user.Id == 0 {
 		return user, errors.New("No user foud !")
