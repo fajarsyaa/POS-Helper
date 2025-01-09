@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -26,6 +27,7 @@ func (s *service) RegisterUser(request RegisterUserInput) (User, error) {
 	user.Email = request.Email
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
 	if err != nil {
+		fmt.Println(err.Error())
 		return user, err
 	}
 	user.PasswordHash = string(passwordHash)
@@ -33,6 +35,7 @@ func (s *service) RegisterUser(request RegisterUserInput) (User, error) {
 
 	newUser, err := s.repository.Save(user)
 	if err != nil {
+		fmt.Println(err.Error())
 		return user, err
 	}
 
@@ -45,7 +48,8 @@ func (s *service) Login(request LoginInput) (User, error) {
 
 	user, err := s.repository.FindByEmail(email)
 	if err != nil {
-		return user, err
+		fmt.Println(err.Error())
+		return user, errors.New("Faile found email!")
 	}
 	if user.Id == 0 {
 		return user, errors.New("No user foud !")
@@ -53,6 +57,7 @@ func (s *service) Login(request LoginInput) (User, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
+		fmt.Println(err.Error())
 		return user, errors.New("Password not match!")
 	}
 
@@ -62,6 +67,7 @@ func (s *service) Login(request LoginInput) (User, error) {
 func (s *service) IsEmailAvailable(email string) (bool, error) {
 	user, err := s.repository.FindByEmail(email)
 	if err != nil {
+		fmt.Println(err.Error())
 		return false, err
 	}
 	if user.Id == 0 {

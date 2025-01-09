@@ -184,7 +184,7 @@ func (r *repository) UpdateOrderByID(OrderId string, updatedItems OrderItem) (Or
 	}
 
 	var order Order
-	err = trx.Preload("OrderItems", "product_id = ? && id != ?", updatedItems.ProductId, "").Where("id = ?", OrderId).First(&order).Error
+	err = trx.Preload("OrderItems", "product_id = ? && id != ?", updatedItems.ProductId, "").Preload("OrderItems.ItemDetail").Where("id = ?", OrderId).First(&order).Error
 	if err != nil {
 		trx.Rollback()
 		return Order{}, fmt.Errorf("Order Not Found")
@@ -203,6 +203,8 @@ func (r *repository) UpdateOrderByID(OrderId string, updatedItems OrderItem) (Or
 	for i, item := range order.OrderItems {
 		if item.ProductId == updatedItems.ProductId {
 			order.OrderItems[i].Quantity = updatedItems.Quantity
+			order.Total -= item.ItemDetail.Price * float64(item.Quantity)
+			order.Total += item.ItemDetail.Price * float64(updatedItems.Quantity)
 			break
 		}
 	}

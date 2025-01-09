@@ -52,7 +52,8 @@ func (s *service) CreateOrder(orderInput OrderInput) (Order, error) {
 	order.OrderItems = newOrderItems
 	savedOrder, err := s.repository.CreateOrder(order)
 	if err != nil {
-		return Order{}, err
+		fmt.Println(err.Error())
+		return Order{}, fmt.Errorf("Create Order Failed")
 	}
 
 	return savedOrder, nil
@@ -61,7 +62,8 @@ func (s *service) CreateOrder(orderInput OrderInput) (Order, error) {
 func (s *service) GetOrdersByUserId(UserId int) ([]Order, error) {
 	orders, err := s.repository.GetOrdersByUserId(UserId)
 	if err != nil {
-		return nil, err
+		fmt.Println(err.Error())
+		return nil, fmt.Errorf("Data Not Found")
 	}
 	return orders, nil
 }
@@ -69,6 +71,7 @@ func (s *service) GetOrdersByUserId(UserId int) ([]Order, error) {
 func (s *service) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order, error) {
 	order, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
 	if err != nil {
+		fmt.Println(err.Error())
 		return Order{}, fmt.Errorf("Data Not Found")
 	}
 
@@ -78,7 +81,8 @@ func (s *service) GetOrdersByUserIdAndOrderId(UserId int, OrderId string) (Order
 func (s *service) PaymentNow(UserId int, OrderId string) (Order, error) {
 	exist, err := s.repository.GetOrdersByUserIdAndOrderId(UserId, OrderId)
 	if err != nil {
-		return Order{}, err
+		fmt.Println(err.Error())
+		return Order{}, fmt.Errorf("Data Not Found")
 	}
 
 	if exist.Status == "done" {
@@ -91,7 +95,8 @@ func (s *service) PaymentNow(UserId int, OrderId string) (Order, error) {
 
 	order, err := s.repository.PaymentNow(OrderId)
 	if err != nil {
-		return Order{}, err
+		fmt.Println(err.Error())
+		return Order{}, fmt.Errorf("Payment Failed")
 	}
 	return order, nil
 }
@@ -108,7 +113,8 @@ func (s *service) UpdateOrderByID(Input UpdateOrderInput) (Order, error) {
 
 	order, err := s.repository.UpdateOrderByID(Input.OrderID, orderItems)
 	if err != nil {
-		return Order{}, err
+		fmt.Println(err.Error())
+		return Order{}, fmt.Errorf("Update Failed")
 	}
 
 	return order, nil
@@ -117,7 +123,8 @@ func (s *service) UpdateOrderByID(Input UpdateOrderInput) (Order, error) {
 func (s *service) DeleteOrderById(OrderId string) error {
 	err := s.repository.DeleteOrderById(OrderId)
 	if err != nil {
-		return err
+		fmt.Println(err.Error())
+		return fmt.Errorf("Delete Failed")
 	}
 
 	return nil

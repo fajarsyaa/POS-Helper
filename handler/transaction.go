@@ -196,6 +196,14 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 		return
 	}
 
+	if input.Quantity == 0 {
+		listErr := gin.H{"errors": "Quantity Can't 0"}
+
+		response := helper.ResponseMessage("Update Failed", "Bad Request", http.StatusBadRequest, listErr)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
 	order, err := h.service.UpdateOrderByID(input)
 	if err != nil {
 		listErr := gin.H{"errors": err.Error()}
