@@ -2,11 +2,12 @@
 
 ## Deskripsi
 Aplikasi ini dirancang sebagai alat bantu bagi para helper yang bertugas mendukung pengelolaan transaksi dalam acara offline. Aplikasi ini terintegrasi dengan sistem POS utama untuk memastikan sinkronisasi data yang akurat dan real-time.
-**Use Case**
-	Masalah yang sering dihadapi oleh brand clothing saat mengadakan event offline adalah terbatasnya jumlah admin yang mengelola POS. Biasanya, hanya ada satu admin dengan laptop yang bertugas di booth utama. Namun, karena tingginya jumlah pengunjung di acara yang ramai, proses transaksi sering terhambat jika hanya mengandalkan satu kasir, hal ini membuat antrean menjadi panjang.
-    Dengan aplikasi ini, para helper di booth dapat membantu mempercepat proses pemesanan menggunakan perangkat mobile. Helper dapat langsung membuat dan menginput pesanan melalui aplikasi tanpa harus bergantian di satu titik kasir. Hal ini memungkinkan pelayanan yang lebih cepat dan efisien selama acara berlangsung.
 
+**Use Case** 
 
+Masalah yang sering dihadapi oleh brand clothing saat mengadakan event offline adalah terbatasnya jumlah admin yang mengelola POS. Biasanya, hanya ada satu admin dengan laptop yang bertugas di booth utama. Namun, karena tingginya jumlah pengunjung di acara yang ramai, proses transaksi sering terhambat jika hanya mengandalkan satu kasir, hal ini membuat antrean menjadi panjang.
+Dengan aplikasi ini, para helper di booth dapat membantu mempercepat proses pemesanan menggunakan perangkat mobile. Helper dapat langsung membuat dan menginput pesanan melalui aplikasi tanpa harus bergantian di satu titik kasir. Hal ini memungkinkan pelayanan yang lebih cepat dan efisien selama acara berlangsung.
+	
 ---
 
 ## Prasyarat
