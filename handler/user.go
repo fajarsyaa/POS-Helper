@@ -22,7 +22,7 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Register Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -35,14 +35,16 @@ func (h *userHandler) RegisterUser(ctx *gin.Context) {
 
 	newUser, err := h.service.RegisterUser(input)
 	if err != nil {
-		response := helper.ResponseMessage("Register Failed", "Bad Request", http.StatusBadRequest, err.Error())
+		listErr := gin.H{"error": err.Error()}
+		response := helper.ResponseMessage("Register Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	token, err := helper.GenerateJWT(newUser.Id, newUser.Email, newUser.Role)
 	if err != nil {
-		response := helper.ResponseMessage("Login Failed", "Internal Server Error", http.StatusBadRequest, err.Error())
+		listErr := gin.H{"error": err.Error()}
+		response := helper.ResponseMessage("Login Failed", "Internal Server Error", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -57,7 +59,7 @@ func (h *userHandler) Login(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Login Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -66,14 +68,16 @@ func (h *userHandler) Login(ctx *gin.Context) {
 
 	userExist, err := h.service.Login(request)
 	if err != nil {
-		response := helper.ResponseMessage("Login Failed", "Bad Request", http.StatusBadRequest, err.Error())
+		listErr := gin.H{"error": err.Error()}
+		response := helper.ResponseMessage("Login Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	token, err := helper.GenerateJWT(userExist.Id, userExist.Email, userExist.Role)
 	if err != nil {
-		response := helper.ResponseMessage("Login Failed", "Internal Server Error", http.StatusBadRequest, err.Error())
+		listErr := gin.H{"error": err.Error()}
+		response := helper.ResponseMessage("Login Failed", "Internal Server Error", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
@@ -92,7 +96,7 @@ func (h *userHandler) CheckEmailAvailable(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Check User Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -101,7 +105,7 @@ func (h *userHandler) CheckEmailAvailable(ctx *gin.Context) {
 
 	IsEmailAvailable, err := h.service.IsEmailAvailable(input.Email)
 	if err != nil {
-		listErr := gin.H{"errors": "Server Error"}
+		listErr := gin.H{"error": "Server Error"}
 		response := helper.ResponseMessage("Email Is Already Use", "Access Denied", http.StatusNotAcceptable, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return

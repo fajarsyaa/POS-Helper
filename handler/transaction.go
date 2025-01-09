@@ -21,7 +21,7 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Created Order Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -30,7 +30,7 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		listErr := gin.H{"error": "User  ID Not Found in context"}
 		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -38,7 +38,7 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 
 	userId, ok := userID.(float64)
 	if !ok {
-		listErr := gin.H{"errors": "Internal Server Error"}
+		listErr := gin.H{"error": "Internal Server Error"}
 		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -48,7 +48,7 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 
 	order, err := h.service.CreateOrder(input)
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Create Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -64,7 +64,7 @@ func (h *trxHandler) CreateOrder(ctx *gin.Context) {
 func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User ID Not Found in context"}
+		listErr := gin.H{"error": "User ID Not Found in context"}
 		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -72,7 +72,7 @@ func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
 
 	userId, ok := userID.(float64)
 	if !ok {
-		listErr := gin.H{"errors": "Internal Server Error"}
+		listErr := gin.H{"error": "Internal Server Error"}
 		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -80,7 +80,7 @@ func (h *trxHandler) GetOrdersByUserId(ctx *gin.Context) {
 
 	orders, err := h.service.GetOrdersByUserId(int(userId))
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Create Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -96,7 +96,7 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Get Data Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -105,7 +105,7 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		listErr := gin.H{"error": "User  ID Not Found in context"}
 		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -113,7 +113,7 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 
 	userId, ok := userID.(float64)
 	if !ok {
-		listErr := gin.H{"errors": "Internal Server Error"}
+		listErr := gin.H{"error": "Internal Server Error"}
 		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -123,14 +123,14 @@ func (h *trxHandler) GetOrdersByUserIdAndOrderId(ctx *gin.Context) {
 
 	order, err := h.service.GetOrdersByUserIdAndOrderId(input.UserId, input.Id)
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Get Data Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
 	if order.Id == "" {
-		listErr := gin.H{"errors": "Data Not Found"}
+		listErr := gin.H{"error": "Data Not Found"}
 		response := helper.ResponseMessage("Get Data Failed", "Success", http.StatusOK, listErr)
 		ctx.JSON(http.StatusOK, response)
 		return
@@ -146,7 +146,7 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Payment Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -155,7 +155,7 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 
 	userID, ok := ctx.Get("userID")
 	if !ok {
-		listErr := gin.H{"errors": "User  ID Not Found in context"}
+		listErr := gin.H{"error": "User  ID Not Found in context"}
 		response := helper.ResponseMessage("System Error", "User  ID Not Found", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -163,7 +163,7 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 
 	userId, ok := userID.(float64)
 	if !ok {
-		listErr := gin.H{"errors": "Internal Server Error"}
+		listErr := gin.H{"error": "Internal Server Error"}
 		response := helper.ResponseMessage("System Error", "Internal Server Error", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -173,7 +173,7 @@ func (h *trxHandler) PaymentNow(ctx *gin.Context) {
 
 	order, err := h.service.PaymentNow(input.UserId, input.Id)
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Payment Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -189,7 +189,7 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Update Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -197,7 +197,7 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 	}
 
 	if input.Quantity == 0 {
-		listErr := gin.H{"errors": "Quantity Can't 0"}
+		listErr := gin.H{"error": "Quantity Can't 0"}
 
 		response := helper.ResponseMessage("Update Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -206,7 +206,7 @@ func (h *trxHandler) UpdateOrderById(ctx *gin.Context) {
 
 	order, err := h.service.UpdateOrderByID(input)
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Update Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return
@@ -222,7 +222,7 @@ func (h *trxHandler) DeleteOrderById(ctx *gin.Context) {
 	err := ctx.ShouldBind(&input)
 	if err != nil {
 		errors := helper.ResponseMessageValidationError(err)
-		listErr := gin.H{"errors": errors}
+		listErr := gin.H{"error": errors}
 
 		response := helper.ResponseMessage("Delete Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -230,7 +230,7 @@ func (h *trxHandler) DeleteOrderById(ctx *gin.Context) {
 	}
 
 	if input.Id == "" {
-		listErr := gin.H{"errors": "Order ID cannot NULL"}
+		listErr := gin.H{"error": "Order ID cannot NULL"}
 		response := helper.ResponseMessage("Delete Failed", "Bad Request", http.StatusBadRequest, listErr)
 		ctx.JSON(http.StatusBadRequest, response)
 		return
@@ -238,7 +238,7 @@ func (h *trxHandler) DeleteOrderById(ctx *gin.Context) {
 
 	err = h.service.DeleteOrderById(input.Id)
 	if err != nil {
-		listErr := gin.H{"errors": err.Error()}
+		listErr := gin.H{"error": err.Error()}
 		response := helper.ResponseMessage("Delete Failed", "Failed", http.StatusInternalServerError, listErr)
 		ctx.JSON(http.StatusInternalServerError, response)
 		return

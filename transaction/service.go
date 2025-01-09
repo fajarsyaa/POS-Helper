@@ -85,6 +85,10 @@ func (s *service) PaymentNow(UserId int, OrderId string) (Order, error) {
 		return Order{}, fmt.Errorf("Data Not Found")
 	}
 
+	if exist.Id == "" {
+		return Order{}, fmt.Errorf("Data Not Found")
+	}
+
 	if exist.Status == "done" {
 		return Order{}, fmt.Errorf("Bill Already Paid")
 	}

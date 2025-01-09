@@ -25,6 +25,16 @@ func (s *service) RegisterUser(request RegisterUserInput) (User, error) {
 	user := User{}
 	user.Name = request.Name
 	user.Email = request.Email
+
+	exist, err := s.repository.FindByEmail(user.Email)
+	if err != nil {
+		fmt.Println(err.Error())
+		return user, errors.New("Failed found email!")
+	}
+	if exist.Id != 0 {
+		return exist, errors.New("Email Already Use")
+	}
+
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
 	if err != nil {
 		fmt.Println(err.Error())
